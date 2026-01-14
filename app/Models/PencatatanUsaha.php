@@ -15,6 +15,9 @@ class PencatatanUsaha extends Model
         'id',
         'kode_nama_usaha',
         'status_usaha',
+        'alamat',
+        'rw',
+        'rt',
         'photo_path',
         'latitude',
         'longitude',
@@ -26,5 +29,9 @@ class PencatatanUsaha extends Model
         static::creating(function ($model) {
             $model->id = (string) Str::uuid();
         });
+    }
+    public function usaha()
+    {
+        return $this->belongsTo(NamaUsaha::class, 'kode_nama_usaha', 'kode_nama_usaha');
     }
 }

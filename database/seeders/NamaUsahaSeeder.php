@@ -10,10 +10,8 @@ class NamaUsahaSeeder extends Seeder
 {
     public function run(): void
     {
-        // Ambil semua desa
         $desaList = DB::table('desa')->get();
 
-        // STATUS PROFILING SBR (FIX 4 DATA)
         $profilingStatus = [
             'tidak_ditemukan',
             'ditemukan',
@@ -21,8 +19,7 @@ class NamaUsahaSeeder extends Seeder
             'ganda',
         ];
 
-        // Nama usaha dummy
-        $usahaDummy = [
+        $jenisUsaha = [
             'Toko Sembako',
             'Warung Makan',
             'Bengkel Motor',
@@ -35,13 +32,63 @@ class NamaUsahaSeeder extends Seeder
             'Salon',
         ];
 
+        $namaBrand = [
+            'Sumber Rejeki',
+            'Maju Jaya',
+            'Makmur',
+            'Jaya Abadi',
+            'Berkah',
+            'Sejahtera',
+            'Sinar Baru',
+            'Anugrah',
+            'Sentosa',
+            'Karya Mandiri',
+        ];
+
         $data = [];
 
         foreach ($desaList as $desa) {
-            // setiap desa bikin 3 usaha
-            for ($i = 1; $i <= 3; $i++) {
 
-                $namaUsaha = $usahaDummy[array_rand($usahaDummy)] . " " . $i;
+            $namaTerpakai = [];
+
+            /**
+             * 1️⃣ WAJIB: 1 usaha untuk setiap jenis usaha
+             */
+            foreach ($jenisUsaha as $jenis) {
+
+                do {
+                    $namaUsaha = $jenis . ' ' . $namaBrand[array_rand($namaBrand)];
+                } while (in_array($namaUsaha, $namaTerpakai));
+
+                $namaTerpakai[] = $namaUsaha;
+
+                $data[] = [
+                    'kode_nama_usaha'       => 'NU-' . strtoupper(Str::random(10)),
+                    'kode_kecamatan'       => $desa->kode_kecamatan,
+                    'kode_desa'            => $desa->kode_desa,
+                    'nama_usaha'           => $namaUsaha,
+                    'alamat'               => "Jl. {$desa->nama_desa} No. " . rand(1, 200),
+                    'status_profiling_sbr' => $profilingStatus[array_rand($profilingStatus)],
+                    'created_at'           => now(),
+                    'updated_at'           => now(),
+                ];
+            }
+
+            /**
+             * 2️⃣ OPSIONAL: tambahan 0–2 usaha (jenis boleh sama)
+             */
+            $tambahan = rand(0, 2);
+
+            for ($i = 0; $i < $tambahan; $i++) {
+
+                do {
+                    $namaUsaha =
+                        $jenisUsaha[array_rand($jenisUsaha)]
+                        . ' '
+                        . $namaBrand[array_rand($namaBrand)];
+                } while (in_array($namaUsaha, $namaTerpakai));
+
+                $namaTerpakai[] = $namaUsaha;
 
                 $data[] = [
                     'kode_nama_usaha'       => 'NU-' . strtoupper(Str::random(10)),

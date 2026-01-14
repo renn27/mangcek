@@ -3,6 +3,55 @@
 @section('title', 'MANGCEK - Mitra Bantu Ground CEK')
 
 @section('content')
+
+    {{-- alert --}}
+    @if (session('success'))
+        <div id="successModal"
+            class="fixed inset-0 flex items-center justify-center z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-black bg-opacity-30 pointer-events-auto"></div>
+
+            <!-- Modal Card -->
+            <div
+                class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 z-50 pointer-events-auto transform translate-y-4 transition-all duration-300">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-green-700">Sukses!</h3>
+                    <button id="closeModal" class="text-gray-500 font-bold">&times;</button>
+                </div>
+                <p class="text-gray-700">{{ session('success') }}</p>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const modal = document.getElementById('successModal');
+                const modalCard = modal.querySelector('div.bg-white');
+                const closeBtn = document.getElementById('closeModal');
+
+                // Fade in
+                requestAnimationFrame(() => {
+                    modal.classList.remove('opacity-0');
+                    modalCard.classList.remove('translate-y-4');
+                });
+
+                // Auto fade out after 4 detik
+                setTimeout(() => {
+                    modal.classList.add('opacity-0');
+                    modalCard.classList.add('translate-y-4');
+                    modalCard.addEventListener('transitionend', () => modal.remove());
+                }, 4000);
+
+                // Close manual
+                closeBtn.addEventListener('click', () => {
+                    modal.classList.add('opacity-0');
+                    modalCard.classList.add('translate-y-4');
+                    modalCard.addEventListener('transitionend', () => modal.remove());
+                });
+            });
+        </script>
+    @endif
+
+
     <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-2">
         <!-- Header dengan logo dari link -->
         <div class="flex items-center justify-between mb-4 pt-2 px-4">
@@ -18,8 +67,7 @@
             </div>
 
             <!-- Logo Kanan dari BPS -->
-            <img src="https://web-api.bps.go.id/cover.php?f=fYLqVpfVtsx6SehYsctUxWIxOUo5cXlmd0ZVNnR6QWRHeU01ZUhNZ05DREFETzRzblo1bE9vazhmSUcyaHA4TkJycWt2eUZOMlFnTTlBeDFGUHc4V2NuQ1pWbGV2QnpMTERSbENvNW1rc01INFFjcDBxYnF1UlEvd2FSRGY4dWo2ZU5ORWJNNXdMM1c4Qjg3"
-                alt="Logo BPS" class="w-12 h-12 object-contain"
+            <img src= "{{ asset('images/logo-se2026.png') }}" alt="Logo BPS" class="w-12 h-12 object-contain"
                 onerror="this.src='https://via.placeholder.com/48x48/ccc/666?text=Logo+BPS';">
         </div>
 
@@ -107,7 +155,9 @@
                         <label class="block text-xs font-semibold text-gray-700 mb-1">
                             Keberadaan Usaha <span class="text-red-500">*</span>
                         </label>
-                        <select id="keberadaan" name="status_usaha" required>
+                        <select id="keberadaan" name="status_usaha"
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
+                            required>
                             <option value="">Pilih Status</option>
                             <option value="tidak_ditemukan">Tidak Ditemukan</option>
                             <option value="ditemukan">Ditemukan</option>
@@ -119,36 +169,40 @@
 
                     <!-- Input Alamat Baru -->
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Alamat (Hasil Cek)</label>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Alamat (Hasil Cek) <span
+                                class="text-red-500">*</span></label>
                         <textarea
                             class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
-                            id="alamatBaru" rows="2" placeholder="Masukkan alamat sesuai hasil cek lapangan"></textarea>
+                            id="alamatBaru" name="alamat" rows="2" placeholder="Masukkan alamat sesuai hasil cek lapangan" required></textarea>
                     </div>
 
                     <!-- RT dan RW -->
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-700 mb-1">RW/Dusun</label>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">RW/Dusun <span
+                                    class="text-red-500">*</span></label>
                             <input type="text"
                                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                id="rw" placeholder="Contoh: 001">
+                                id="rw" name="rw" placeholder="Contoh: 001" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-700 mb-1">RT</label>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">RT <span
+                                    class="text-red-500">*</span></label>
                             <input type="text"
                                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                id="rt" placeholder="Contoh: 002">
+                                id="rt" name="rt" placeholder="Contoh: 002" required>
                         </div>
                     </div>
 
                     <!-- Input Foto -->
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 mb-1">
-                            Foto Usaha <span class="text-red-500">*</span>
+                            Foto Usaha
                         </label>
 
                         <!-- Input File Hidden -->
-                        <input type="file" id="foto" name="photo" class="hidden" accept="image/*" capture="environment">
+                        <input type="file" id="foto" name="photo" class="hidden" accept="image/*"
+                            capture="environment">
 
                         <!-- Tombol Kamera -->
                         <button type="button" onclick="document.getElementById('foto').click()"
@@ -172,7 +226,7 @@
                     <!-- Koordinat -->
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 mb-1">
-                            Koordinat <span class="text-red-500">*</span>
+                            Koordinat
                         </label>
 
                         <div class="space-y-2">
@@ -180,7 +234,7 @@
                             <div class="flex gap-2">
                                 <input type="text"
                                     class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    id="latitude" name="latitude" placeholder="Latitude" required>
+                                    id="latitude" name="latitude" placeholder="Latitude">
                                 <button type="button" id="btnGetLocation"
                                     class="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200 flex items-center space-x-1">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -192,7 +246,7 @@
                             <div class="flex gap-2">
                                 <input type="text"
                                     class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    id="longitude" name="longitude" placeholder="Longitude" required>
+                                    id="longitude" name="longitude" placeholder="Longitude">
                                 <button type="button" id="btnGetLocation2"
                                     class="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200 flex items-center space-x-1">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -235,17 +289,6 @@
     <script>
         // JavaScript untuk form
         document.addEventListener('DOMContentLoaded', function() {
-            // Simulasi data alamat
-            const usahaData = {
-                'usaha1': 'Jl. Merdeka No. 12, Kecamatan A',
-                'usaha2': 'Jl. Sudirman No. 45, Kecamatan B'
-            };
-
-            // Update alamat
-            document.getElementById('usaha').addEventListener('change', function() {
-                document.getElementById('alamatUsaha').value = usahaData[this.value] || '';
-            });
-
             // Handle foto
             document.getElementById('foto').addEventListener('change', function(e) {
                 const file = e.target.files[0];
@@ -294,7 +337,6 @@
 
             // Form submission
             document.getElementById('mangcekForm').addEventListener('submit', function(e) {
-                e.preventDefault();
 
                 let isValid = true;
                 document.querySelectorAll('[required]').forEach(field => {
@@ -382,7 +424,14 @@
                     return;
                 }
 
-                fetch(`/api/usaha/search?q=${this.value}`)
+                const desa = document.getElementById('desa').value;
+
+                if (!desa) {
+                    resultBox.classList.add('hidden');
+                    return;
+                }
+
+                fetch(`/api/usaha/search?q=${this.value}&kode_desa=${desa}`)
                     .then(res => res.json())
                     .then(data => {
                         resultBox.innerHTML = '';
