@@ -10,8 +10,8 @@ class AddLatitudeLongitudeToNamaUsahaTable extends Migration
     {
         Schema::table('nama_usaha', function (Blueprint $table) {
             // Menambahkan kolom latitude dan longitude setelah kolom 'alamat'
-            $table->decimal('latitude', 10, 7)->nullable()->after('alamat');
-            $table->decimal('longitude', 10, 7)->nullable()->after('latitude');
+            $table->string('latitude')->nullable()->after('alamat');
+            $table->string('longitude')->nullable()->after('latitude');
         });
     }
 

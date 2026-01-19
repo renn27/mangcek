@@ -29,6 +29,8 @@ class NamaUsahaImport implements ToCollection, WithHeadingRow, WithChunkReading
             $kodeUsaha= trim($row['kode_nama_usaha'] ?? '');
             $namaUsaha= trim($row['nama_usaha'] ?? '');
             $alamat   = trim($row['alamat'] ?? '');
+            $latitude = trim($row['latitude'] ?? '');
+            $longitude = trim($row['longitude'] ?? '');
             $profiling= trim($row['status_profiling_sbr'] ?? '');
 
             // Validasi wajib
@@ -59,6 +61,8 @@ class NamaUsahaImport implements ToCollection, WithHeadingRow, WithChunkReading
                 'kode_kecamatan'        => substr($kodeKec, 0, 50),
                 'nama_usaha'            => mb_substr($namaUsaha, 0, 255),
                 'alamat'                => mb_substr($alamat, 0, 255),
+                'latitude'                => mb_substr($latitude, 0, 255),
+                'longitude'                => mb_substr($longitude, 0, 255),
                 'status_profiling_sbr'  => mb_substr($profiling, 0, 50),
                 'created_at'            => now(),
                 'updated_at'            => now(),
