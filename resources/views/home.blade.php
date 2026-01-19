@@ -52,23 +52,40 @@
         @endif
 
 
-        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-2">
-            <!-- Header dengan logo dari link -->
-            <div class="flex items-center justify-between mb-4 pt-2 px-4">
-                <!-- Logo Kiri dari PNGEgg -->
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg/2560px-Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg.png"
-                    alt="Logo Kiri" class="w-12 h-12 object-contain"
-                    onerror="this.src='https://via.placeholder.com/48x48/ccc/666?text=Logo+Kiri';">
+        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 pb-2">
+            <div
+                class="bg-gradient-to-r from-gray-50 to-white shadow-md rounded-b-lg mb-6 py-2 px-4 border-b border-gray-200">
+                <div class="flex items-center justify-between max-w-6xl mx-auto">
+                    <!-- Logo Kiri -->
+                    <div class="flex items-center space-x-2 flex-shrink-0">
+                        <div class="bg-white p-1 rounded-lg shadow-sm border border-gray-200">
+                            <img src="{{ asset('images/logo-bps.svg') }}" alt="Logo BPS" class="w-8 h-8 object-contain"
+                                onerror="this.src='https://via.placeholder.com/32x32/ccc/666?text=BPS';">
+                        </div>
+                    </div>
 
-                <!-- Judul Tengah -->
-                <div class="text-center mx-4 flex-1"> <!-- mx-4 = margin kiri-kanan -->
-                    <h1 class="text-2xl font-bold text-primary">MANGCEK SE2026</h1>
-                    <p class="text-gray-600 text-sm mt-1">(Mitra Bantu Ground Check)</p>
+                    <!-- Judul Tengah dengan warna #f79039 dan #febd26 -->
+                    <div class="text-center flex-1 min-w-0 mx-2">
+                        <h1
+                            class="text-lg md:text-2xl lg:text-3xl font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                            <span style="color: #f79039" class="inline-block">MANGCEK</span>
+                            <span style="color: #febd26" class="inline-block ml-1 md:ml-2">SE2026</span>
+                        </h1>
+                        <div
+                            class="mt-0 md:mt-1 text-gray-600 text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-1">
+                            (Mitra Bantu Ground Check)
+                        </div>
+                    </div>
+
+                    <!-- Logo Kanan -->
+                    <div class="flex items-center space-x-2 flex-shrink-0">
+                        <div class="bg-white p-1 rounded-lg shadow-sm border border-gray-200">
+                            <img src="{{ asset('images/logo-se2026.png') }}" alt="Logo SE2026"
+                                class="w-8 h-8 object-contain"
+                                onerror="this.src='https://via.placeholder.com/32x32/ccc/666?text=SE2026';">
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Logo Kanan dari BPS -->
-                <img src= "{{ asset('images/logo-se2026.png') }}" alt="Logo BPS" class="w-12 h-12 object-contain"
-                    onerror="this.src='https://via.placeholder.com/48x48/ccc/666?text=Logo+BPS';">
             </div>
 
             <!-- Form Utama -->
@@ -128,8 +145,35 @@
                             <label class="block text-xs font-semibold text-gray-700 mb-1">Alamat Usaha</label>
                             <textarea
                                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-gray-50"
-                                id="alamatUsaha" rows="2" readonly></textarea>
+                                id="alamatUsaha" rows="2" readonly>{{ $data->alamat ?? '' }}</textarea>
                             <p class="text-xs text-gray-500 mt-1">Alamat otomatis terisi</p>
+                        </div>
+
+                        <!-- Koordinat -->
+                        <div class="mt-3">
+                            <label class="block text-xs font-semibold text-gray-700 mb-2">Koordinat</label>
+
+                            <div class="flex border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                                <!-- Latitude -->
+                                <div class="flex-1 border-r border-gray-200">
+                                    <div class="px-3 py-2">
+                                        <p class="text-xs text-gray-500 mb-1">Latitude</p>
+                                        <p id="latitude_database" class="text-sm">
+                                            {{ $data->latitude ?? 'Tidak tersedia' }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Longitude -->
+                                <div class="flex-1">
+                                    <div class="px-3 py-2">
+                                        <p class="text-xs text-gray-500 mb-1">Longitude</p>
+                                        <p id="longitude_database" class="text-sm">
+                                            {{ $data->longitude ?? 'Tidak tersedia' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-gray-500 mt-2">Koordinat otomatis dari sistem</p>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1">
@@ -255,6 +299,9 @@
                                 </div>
                             </div>
                             <p class="text-xs text-gray-500 mt-1">Gunakan tombol "Ambil" untuk lokasi otomatis</p>
+
+                            <p id="distanceInfo" class="text-xs text-gray-500 mt-1"></p>
+
                         </div>
 
                         <!-- Nama Petugas -->
@@ -303,6 +350,8 @@
                 const kodeUsaha = document.getElementById('kode_usaha');
 
                 const alamatUsaha = document.getElementById('alamatUsaha');
+                const latitudeDatabase = document.getElementById('latitude_database');
+                const longitudeDatabase = document.getElementById('longitude_database');
                 const profilingSbr25 = document.getElementById('profiling_sbr25');
 
                 const btnLat = document.getElementById('btnGetLocation');
@@ -331,6 +380,33 @@
                     );
                 });
 
+                /* =========================
+                Membandingkan jarak
+                ========================== */
+
+                function getDatabaseCoords() {
+                    const lat = parseFloat(latitudeDatabase.textContent);
+                    const lng = parseFloat(longitudeDatabase.textContent);
+                    if (isNaN(lat) || isNaN(lng)) return null; // Kalau tidak ada data
+                    return {
+                        lat,
+                        lng
+                    };
+                }
+
+                function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+                    const R = 6371000; // Radius bumi dalam meter
+                    const dLat = (lat2 - lat1) * Math.PI / 180;
+                    const dLon = (lon2 - lon1) * Math.PI / 180;
+                    const a =
+                        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    return R * c; // jarak dalam meter
+                }
+
+
 
                 /* =========================
                 GEOLOCATION
@@ -348,6 +424,20 @@
                         pos => {
                             document.getElementById('latitude').value = pos.coords.latitude.toFixed(6);
                             document.getElementById('longitude').value = pos.coords.longitude.toFixed(6);
+                            // ✅ Hitung jarak ke database
+                            const dbCoords = getDatabaseCoords();
+                            const distanceInfo = document.getElementById('distanceInfo');
+                            if (dbCoords) {
+                                const distance = getDistanceFromLatLonInMeters(
+                                    dbCoords.lat, dbCoords.lng,
+                                    pos.coords.latitude, pos.coords.longitude
+                                );
+                                distanceInfo.textContent =
+                                    `Lokasi berjarak ${distance.toFixed(1)} meter dari lokasi di database.`;
+                            } else {
+                                distanceInfo.textContent = ''; // kalau database kosong, tidak tampil
+                            }
+
                             button.innerHTML = originalText;
                             button.disabled = false;
                             showAlert('Lokasi berhasil diambil!', 'success');
@@ -427,6 +517,8 @@
 
                     kodeUsaha.value = '';
                     alamatUsaha.value = '';
+                    latitudeDatabase.textContent = '';
+                    longitudeDatabase.textContent = '';
                     profilingSbr25.value = '';
                 });
 
@@ -470,6 +562,9 @@
                         .then(u => {
                             alamatUsaha.value = u.alamat ?? '';
                             profilingSbr25.value = u.status_profiling_sbr ?? '';
+                            latitudeDatabase.textContent = u.latitude ?? '';
+                            longitudeDatabase.textContent = u.longitude ?? '';
+
                         });
                 });
 
@@ -481,6 +576,8 @@
                     kodeUsaha.value = '';
                     resultBox.classList.add('hidden');
                     alamatUsaha.value = '';
+                    latitudeDatabase.textContent = '';
+                    longitudeDatabase.textContent = '';
                     profilingSbr25.value = '';
 
                     if (this.value) {

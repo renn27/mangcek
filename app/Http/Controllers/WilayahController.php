@@ -63,6 +63,8 @@ class WilayahController extends Controller
         }
 
         return response()->json([
+            'latitude' => $usaha->latitude,
+            'longitude' => $usaha->longitude,
             'alamat' => $usaha->alamat,
             'status_profiling_sbr' => $usaha->status_profiling_sbr,
         ]);

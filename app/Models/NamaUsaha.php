@@ -20,6 +20,8 @@ class NamaUsaha extends Model
         'kode_kecamatan',
         'nama_usaha',
         'alamat',
+        'latitude',
+        'longitude',
         'status_profiling_sbr',
     ];
 

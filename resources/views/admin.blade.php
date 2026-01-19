@@ -3,25 +3,42 @@
 @section('title', 'Admin - CRUD Pencatatan Usaha')
 
 @section('content')
-    <div class="p-4">
-        <!-- Header dengan logo dari link -->
-        <div class="flex items-center justify-between mb-4 pt-2 px-4">
-            <!-- Logo Kiri dari PNGEgg -->
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg/2560px-Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg.png"
-                alt="Logo Kiri" class="w-10 h-10 object-contain"
-                onerror="this.src='https://via.placeholder.com/40x40/ccc/666?text=Logo+Kiri';">
+    <div class="px-4 pb-2">
+        <div
+                class="bg-gradient-to-r from-gray-50 to-white shadow-md rounded-b-lg mb-6 py-2 px-4 border-b border-gray-200">
+                <div class="flex items-center justify-between max-w-6xl mx-auto">
+                    <!-- Logo Kiri -->
+                    <div class="flex items-center space-x-2 flex-shrink-0">
+                        <div class="bg-white p-1 rounded-lg shadow-sm border border-gray-200">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg/2560px-Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg.png"
+                                alt="Logo BPS" class="w-8 h-8 object-contain"
+                                onerror="this.src='https://via.placeholder.com/32x32/ccc/666?text=BPS';">
+                        </div>
+                    </div>
 
-            <!-- Judul Tengah -->
-            <div class="text-center mx-4 flex-1">
-                <h1 class="text-xl font-bold text-primary">MANGCEK SE2026</h1>
-                <p class="text-gray-600 text-xs mt-1">(Mitra Bantu Ground Check)</p>
+                    <!-- Judul Tengah dengan warna #f79039 dan #febd26 -->
+                    <div class="text-center flex-1 min-w-0 mx-2">
+                        <h1
+                            class="text-lg md:text-2xl lg:text-3xl font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                            <span style="color: #f79039" class="inline-block">MANGCEK</span>
+                            <span style="color: #febd26" class="inline-block ml-1 md:ml-2">SE2026</span>
+                        </h1>
+                        <div
+                            class="mt-0 md:mt-1 text-gray-600 text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-1">
+                            (Mitra Bantu Ground Check)
+                        </div>
+                    </div>
+
+                    <!-- Logo Kanan -->
+                    <div class="flex items-center space-x-2 flex-shrink-0">
+                        <div class="bg-white p-1 rounded-lg shadow-sm border border-gray-200">
+                            <img src="{{ asset('images/logo-se2026.png') }}" alt="Logo SE2026"
+                                class="w-8 h-8 object-contain"
+                                onerror="this.src='https://via.placeholder.com/32x32/ccc/666?text=SE2026';">
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Logo Kanan dari BPS -->
-            <img src= "{{ asset('images/logo-se2026.png') }}"
-                alt="Logo BPS" class="w-10 h-10 object-contain"
-                onerror="this.src='https://via.placeholder.com/40x40/ccc/666?text=Logo+BPS';">
-        </div>
 
         <!-- Card untuk tabel -->
         <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
