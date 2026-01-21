@@ -142,7 +142,16 @@
                                         Kode Nama Usaha <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text" id="edit_kode_nama_usaha" name="kode_nama_usaha" required
-                                        class="w-full px-3 py-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary">
+                                        class="w-full px-3 py-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary" readonly>
+                                </div>
+
+                                <!-- Nama Usaha -->
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">
+                                        Nama Usaha <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="edit_nama_usaha" name="nama_usaha" required
+                                        class="w-full px-3 py-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary focus:border-primary" readonly>
                                 </div>
 
                                 <!-- Status Usaha -->
@@ -732,6 +741,7 @@
                         success: function(response) {
                             $('#edit_id').val(response.id);
                             $('#edit_kode_nama_usaha').val(response.kode_nama_usaha);
+                            $('#edit_nama_usaha').val(response.nama_usaha_text);
                             $('#edit_status_usaha').val(response.status_usaha);
                             $('#edit_alamat').val(response.alamat);
                             $('#edit_rt').val(response.rt);

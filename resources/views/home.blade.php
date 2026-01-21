@@ -267,6 +267,17 @@
                             </div>
                         </div>
 
+                        <!-- MAP -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">
+                                Tentukan Lokasi di Peta
+                            </label>
+                            <div id="map" class="w-full h-64 rounded-lg border border-gray-300"></div>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Geser marker atau klik peta untuk menentukan koordinat
+                            </p>
+                        </div>
+
                         <!-- Koordinat -->
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1">
@@ -408,50 +419,67 @@
 
 
 
-                /* =========================
-                GEOLOCATION
-                ========================== */
-                function getCurrentLocation(target) {
-                    if (!navigator.geolocation) return;
+                function getCurrentLocation() {
+                    if (!navigator.geolocation) {
+                        showAlert('Browser tidak mendukung GPS', 'error');
+                        return;
+                    }
 
-                    const button = target === 'latitude' ? btnLat : btnLng;
-                    const originalText = button.innerHTML;
-
-                    button.innerHTML = 'Loading...';
-                    button.disabled = true;
+                    btnLat.disabled = true;
+                    btnLng.disabled = true;
 
                     navigator.geolocation.getCurrentPosition(
                         pos => {
-                            document.getElementById('latitude').value = pos.coords.latitude.toFixed(6);
-                            document.getElementById('longitude').value = pos.coords.longitude.toFixed(6);
-                            // ✅ Hitung jarak ke database
+                            const lat = pos.coords.latitude;
+                            const lng = pos.coords.longitude;
+
+                            // ⛔ validasi wilayah
+                            if (!oganIlirBounds.contains([lat, lng])) {
+                                showAlert('Lokasi di luar Kabupaten Ogan Ilir', 'error');
+                                btnLat.disabled = false;
+                                btnLng.disabled = false;
+                                return;
+                            }
+
+                            // ✅ update input
+                            latInput.value = lat.toFixed(6);
+                            lngInput.value = lng.toFixed(6);
+
+                            // ✅ update map + marker
+                            marker.setLatLng([lat, lng]);
+                            map.setView([lat, lng], 17);
+
+                            // ✅ hitung jarak ke database
                             const dbCoords = getDatabaseCoords();
-                            const distanceInfo = document.getElementById('distanceInfo');
                             if (dbCoords) {
                                 const distance = getDistanceFromLatLonInMeters(
                                     dbCoords.lat, dbCoords.lng,
-                                    pos.coords.latitude, pos.coords.longitude
+                                    lat, lng
                                 );
                                 distanceInfo.textContent =
                                     `Lokasi berjarak ${distance.toFixed(1)} meter dari lokasi di database.`;
-                            } else {
-                                distanceInfo.textContent = ''; // kalau database kosong, tidak tampil
                             }
 
-                            button.innerHTML = originalText;
-                            button.disabled = false;
-                            showAlert('Lokasi berhasil diambil!', 'success');
+                            btnLat.disabled = false;
+                            btnLng.disabled = false;
+
+                            showAlert('Lokasi berhasil diambil', 'success');
                         },
-                        () => {
-                            button.innerHTML = originalText;
-                            button.disabled = false;
-                            showAlert('Gagal mengambil lokasi', 'error');
+                        err => {
+                            showAlert('Gagal mengambil lokasi GPS', 'error');
+                            btnLat.disabled = false;
+                            btnLng.disabled = false;
+                        }, {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
                         }
                     );
                 }
 
-                btnLat.addEventListener('click', () => getCurrentLocation('latitude'));
-                btnLng.addEventListener('click', () => getCurrentLocation('longitude'));
+                btnLat.addEventListener('click', getCurrentLocation);
+                btnLng.addEventListener('click', getCurrentLocation);
+
 
                 /* =========================
                 SUBMIT FORM
@@ -479,6 +507,60 @@
 
                     this.submit();
                 });
+
+                /* =========================
+                       MAP LEAFLET
+                    ========================== */
+
+                const latInput = document.getElementById('latitude');
+                const lngInput = document.getElementById('longitude');
+
+                // Default lokasi (Indonesia / bisa kamu set dari database)
+                const defaultLat = -2.5489;
+                const defaultLng = 118.0149;
+
+                // Batas Kabupaten Ogan Ilir
+                const oganIlirBounds = L.latLngBounds(
+                    [-3.60, 104.30], // Barat Daya
+                    [-2.90, 104.95] // Timur Laut
+                );
+
+                const map = L.map('map', {
+                    maxBounds: oganIlirBounds,
+                    maxBoundsViscosity: 1.0 // tidak bisa digeser keluar
+                }).setView([-3.25, 104.65], 10); // tengah Ogan Ilir
+
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+
+                // Marker draggable
+                let marker = L.marker([defaultLat, defaultLng], {
+                    draggable: true
+                }).addTo(map);
+
+                // Saat marker digeser
+                marker.on('dragend', function(e) {
+                    const pos = e.target.getLatLng();
+                    latInput.value = pos.lat.toFixed(6);
+                    lngInput.value = pos.lng.toFixed(6);
+                });
+
+                // Saat klik peta
+                map.on('click', function(e) {
+                    marker.setLatLng(e.latlng);
+                    latInput.value = e.latlng.lat.toFixed(6);
+                    lngInput.value = e.latlng.lng.toFixed(6);
+                });
+
+                /* =========================
+                   INTEGRASI GPS BUTTON
+                ========================== */
+                function moveMarker(lat, lng) {
+                    marker.setLatLng([lat, lng]);
+                    map.setView([lat, lng], 17);
+                }
 
                 /* =========================
                 FETCH KECAMATAN
@@ -517,8 +599,8 @@
 
                     kodeUsaha.value = '';
                     alamatUsaha.value = '';
-                    latitudeDatabase.textContent = '';
-                    longitudeDatabase.textContent = '';
+                    latitudeDatabase.textContent = '-';
+                    longitudeDatabase.textContent = '-';
                     profilingSbr25.value = '';
                 });
 
@@ -562,8 +644,8 @@
                         .then(u => {
                             alamatUsaha.value = u.alamat ?? '';
                             profilingSbr25.value = u.status_profiling_sbr ?? '';
-                            latitudeDatabase.textContent = u.latitude ?? '';
-                            longitudeDatabase.textContent = u.longitude ?? '';
+                            latitudeDatabase.textContent = u.latitude ?? '-';
+                            longitudeDatabase.textContent = u.longitude ?? '-';
 
                         });
                 });
